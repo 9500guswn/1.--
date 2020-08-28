@@ -35,107 +35,109 @@
             crossorigin="anonymous"></script>
 
 
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        function orders() {
-            // $.ajax({
-            //     type: "POST",
-            //     url: "/receive",
-            //     data: {},
-            //     success: function (response) { // 성공하면
-            //         if (response["result"] == "success") {
-            //             alert(response["msg"]);
-            //             return;
-            //         }
-            //     }
-            // })
-            // $.ajax({
-            //     type: "GET",
-            //     url: "/receive",
-            //     data: {},
-            //     success: function (response) {
-            //         if (response["result"] == "success") {
-            //             let receive = response['receive']
-            //             console.log(receive)
-            //             // for(i=0; i<receive.length; i++){
-            //             // let childData=receive[i];
-            //             // let tags=childData['tag']
-            //             // let tempHtml=
-            //         }
-            //     }
-            // })
 
-            let local = $('#local').val()
-            let food = $('#food').val()
+        // Load the Visualization API and the corechart package.
+        google.charts.load('current', {packages: ['corechart', 'bar']});
 
-            // if (local == '수원' && food == '돈까스맛집') {
-                $.ajax({
-                    type: "GET",
-                    url: "/receive",
-                    data: {},
-                    success: function (response) {
-                        if (response["result"] == "success") {
-                            let receive = response['receive']
-                            for (let i = 0; i < receive.length; i++) {
-                                let childData = receive[i];
-                                let tag = childData['tag']
-                                let tags = tag[0]
-                                // make(tags)
-                                console.log(tag)
-                            }
 
-                            // function make(tags) {
-                            //     let tempHtml = `
-                            // <tr>
-                            //     <td>${tags}</td>
-                            //
-                            // </tr>`
-                            //     $('#reviews-box').append(tempHtml)
-                            // }
-                        }
+        // Set a callback to run when the Google Visualization API is loaded.
+        // google.charts.setOnLoadCallback(drawChart);
+
+        // Callback that creates and populates a data table,
+        // instantiates the pie chart, passes in the data and
+        // draws it.
+
+        function drawChart(count) {
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', '맛집명');
+            data.addColumn('number', '언급 횟수');
+
+            data.addRows([
+                ['돈까스상회', 27],
+                ['친구정', 19],
+                ['고릴라수제돈까스', 14],
+                ['고돈', 14],
+                ['동명카츠', 6],
+                ['테루', 6],
+                ['수원 토끼정', 5],
+                ['최고당돈까스', 3],
+                ['아주대 한조카츠', 2],
+                ['정돈', 2],
+                ['키무카츠', 2],
+                ['경양카츠', 2],
+                ['카츠만', 2],
+                ['동경카츠', 1],
+                ['도쿄하야시라이스클럽', 1],
+                ['쑝쑝돈까스', 1],
+                ['황금돈가스', 1],
+                ['일호식당', 1],
+                ['로마레스토랑', 1],
+                ['남바완돈카츠', 1],
+            ]);
+
+            var options = {
+                title: '맛집검색',
+                hAxis: {
+                    title: '맛집 이름',
+
+                },
+                vAxis: {
+                    title: '언급 횟수'
+                }
+            };
+            var chart = new google.visualization.ColumnChart(
+                document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+
+    </script>
+
+    <script type="text/javascript">
+        function countFood(data) {
+            let result = {}
+            for (let i = 0; i < data.length; i++) {
+                let childData = data[i];
+                let tags = childData.tag;
+
+                for (let j = 0; j < tags.length; j++) {
+                    let tag = tags[j];
+                    if (result[tag]) {
+                        result[tag] = result[tag] + 1;
+                    } else {
+                        result[tag] = 1;
                     }
-                })
+                }
             }
 
+            return result;
+        }
 
-        // $(document).ready(function () {
-        //     showArticles();
-        // });
-        //
-        //
-        // function showArticles() {
-        //     let local = $('#local').val()
-        //     let food = $('#food').val()
-        //
-        //     // if (local == '수원' && food == '돈까스맛집') {
-        //         $.ajax({
-        //             type: "GET",
-        //             url: "/receive",
-        //             data: {},
-        //             success: function (response) {
-        //                 if (response["result"] == "success") {
-        //                     let receive = response['receive']
-        //                     for (let i = 0; i < receive.length; i++) {
-        //                         let childData = receive[i];
-        //                         let tag = childData['tag']
-        //                         let tags=tag[0]
-        //                         // make(tags)
-        //                         console.log(tag)
-        //                     }
+        function orders() {
+            let local = $('#local').val();
+            let food = $('#food').val();
 
+            $.ajax({
+                type: "POST",
+                url: "/receive",
+                data: {
+                    local: local,
+                    food: food,
+                },
+                success: function (response) {
+                    if (response["result"] == "success") {
+                        let receive = response['receive']
+                        console.log(receive)
+                        let count = countFood(receive);
+                        console.log(count)
+                        drawChart();
+                    }
+                }
+            })
+        }
 
-                                // function make(tags) {
-                                //     let tempHtml = `
-                                // <tr>
-                                //     <td>${tags}</td>
-                                //
-                                // </tr>`
-                                //     $('#reviews-box').append(tempHtml)
-                                // }
-        //                     }
-        //                 }
-        //         })
-        // }
-        // }
     </script>
 
     <style>
@@ -151,14 +153,8 @@
             font-size: 15px;
         }
 
-        /*.text {*/
-        /*    width: 500px;*/
-        /*    margin-top: 20px;*/
-        /*    margin-bottom: 20px;*/
-        /*}*/
-
         .order {
-            width: 300px;
+            width: 500px;
             margin: 100px 10px auto 100px;
         }
 
@@ -183,6 +179,12 @@
             text-align: center;
         }
 
+        .chart {
+            width: 500px;
+            height: 800px;
+            margin: 10px auto;
+        }
+
     </style>
 </head>
 <body>
@@ -198,9 +200,9 @@
                 </div>
                 <select class="custom-select" id="local">
                     <option selected>--지역명을 선택하세요--</option>
-                    <option value="1">수원</option>
-                    <option value="2">강릉</option>
-                    <option value="3">제주도</option>
+                    <option value="수원">수원</option>
+                    <option value="강릉">강릉</option>
+                    <option value="제주도">제주도</option>
                 </select>
             </div>
 
@@ -210,20 +212,29 @@
                 </div>
                 <select class="custom-select" id="food">
                     <option selected>--먹고싶은 음식을 선택하세요--</option>
-                    <option value="1">돈까스맛집</option>
-                    <option value="2">파스타맛집</option>
-                    <option value="3">맛집추천</option>
+                    <option value="돈까스맛집">돈까스맛집</option>
+                    <option value="파스타맛집">파스타맛집</option>
+                    <option value="맛집추천">맛집추천</option>
                 </select>
             </div>
 
             <button onclick="orders()" type="button" class="btn btn-primary mybtn">클릭</button>
-            <tbody id="reviews-box">
-            <tr>
-                <td>왕초보 8주 코딩</td>
-                <td>김르탄</td>
-                <td>역시 왕초보 코딩교육의 명가답군요. 따라하다보니 눈 깜짝할 사이에 8주가 지났습니다.</td>
-            </tr>
-            </tbody>
+            <table>
+                <thead>
+                <tr>
+
+                </tr>
+                </thead>
+                <tbody id="reviews-box">
+                <!--                <tr>-->
+                <!--                    <td>왕초보 8주 코딩</td>-->
+                <!--                    <td>김르탄</td>-->
+                <!--                    <td>역시 왕초보 코딩교육의 명가답군요. 따라하다보니 눈 깜짝할 사이에 8주가 지났습니다.</td>-->
+                <!--                </tr>-->
+                </tbody>
+
+            </table>
+            <div id="chart_div" class="chart"></div>
         </div>
     </div>
 </div>

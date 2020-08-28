@@ -19,24 +19,21 @@ def my_project():
 # 주문하기(POST) API
 @app.route('/receive', methods=['POST'])
 def post_receive():
-    # local_receive = request.form['local_give']
-    # food_recevie = request.form['food_give']
-    #
-    # db.home_home.insert_one({
-    #     'title': title,
-    #     'desc': desc,
-    #     'image': image,
-    #     'c': c
-    # })
+    give_local = request.form['local']
+    give_food = request.form['food']
 
-    return jsonify({'result': 'success', 'msg': 'POST 연결되었습니다!'})
-
+    print(give_food)
+    print(give_local)
+    # receive = list(db.수원맛집추천.find({}, {'_id': False}))
+    receive = list(db.foodList.find({'local' : give_local, 'food' : give_food}, {'_id': False}))
+    return jsonify({'result': 'success', 'msg': 'POST 연결되었습니다!', 'receive': receive})
 
 # 주문 목록보기(Read) API
-@app.route('/receive', methods=['GET'])
-def get_receive():
-    receive = list(db.my_project.find({}, {'_id': False}))
-    return jsonify({'result': 'success', 'msg': 'GET 연결되었습니다!','receive':receive})
+
+@app.route('/pasta', methods=['GET'])
+def get_pasta():
+    foodList = list(db.foodList.find({}, {'_id': False}))
+    return jsonify({'result': 'success', 'msg': 'GET 연결되었습니다!', 'foodList': foodList})
 
 
 if __name__ == '__main__':

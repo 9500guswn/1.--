@@ -21,11 +21,10 @@ def my_project():
 def post_receive():
     give_local = request.form['local']
     give_food = request.form['food']
-
     print(give_food)
     print(give_local)
     # receive = list(db.수원맛집추천.find({}, {'_id': False}))
-    receive = list(db.foodList.find({'local' : give_local, 'food' : give_food}, {'_id': False}))
+    receive = list(db.realFood.find({'local' : give_local, 'food' : give_food}, {'_id': False}))
     return jsonify({'result': 'success', 'msg': 'POST 연결되었습니다!', 'receive': receive})
 
 # 주문 목록보기(Read) API

@@ -56,32 +56,47 @@ instagram_tags = []
 # one=soup.select()
 time.sleep(3)
 
-opening = driver.find_element_by_css_selector('div.v1Nh3.kIKUG._bz0w')
+opening = driver.find_element_by_css_selector('div.v1Nh3.kIKUG._bz0w') # 맨 첫번째 게시물 클릭
 opening.click()
 
 time.sleep(3)
 
-for i in range(50):
+# for i in range(100):
+#     time.sleep(2)
+#     data = driver.find_element_by_css_selector('.C7I1f.X7jCj')# C7I1f X7jCj 해시태그값 가져오기
+#     if data is None:
+#         continue
+#     tag_raw = data.text
+#     tags = re.findall('#[A-Za-z0-9가-힣]+', tag_raw)
+#     tag = ''.join(tags).replace("#", " ")
+#     tag_data = tag.split()
+#     next = driver.find_element_by_css_selector("a._65Bje.coreSpriteRightPaginationArrow") # 다음 게시물로 넘어가기 클릭
+#     next.click()
+#     print(tag_data)
+#     db.foodList.insert_one({
+#         'tag':tag_data,
+#         'local' : '수원',
+#         'food' : '파스타'
+#     })
+for i in range(100):
     time.sleep(2)
-    # html = driver.page_source
-    # soup = BeautifulSoup(html, 'html.parser')
-    # tags = soup.select('.xil3i')
-    # tags_text=tags.text
-    data = driver.find_element_by_css_selector('.C7I1f.X7jCj')# C7I1f X7jCj
+    data = driver.find_element_by_css_selector('.C7I1f.X7jCj,.eo2As')# 해시태크값 가져오기
+    # data가 없는 경우 다음으로 넘어가기
+    if data is None:
+        continue
     tag_raw = data.text
     tags = re.findall('#[A-Za-z0-9가-힣]+', tag_raw)
     tag = ''.join(tags).replace("#", " ")
+    if tag is None:
+        continue
     tag_data = tag.split()
-    # for allTag in tag_data:
-    #     instagram_tags.append(allTag)
-    #     print(instagram_tags)
-    # time.sleep(3)
-    # print(tag_raw)
-    next = driver.find_element_by_css_selector("a._65Bje.coreSpriteRightPaginationArrow")
+    next = driver.find_element_by_css_selector("a._65Bje.coreSpriteRightPaginationArrow") # 다음 게시물로 넘어가기 클릭
     next.click()
     print(tag_data)
-    db.my_project.insert_one({
+    db.수원맛집.insert_one({
         'tag':tag_data,
+        'local' : '수원',
+        'food' : '돈까스맛집'
     })
     # print(tag_data)
     # for tag in tags:
